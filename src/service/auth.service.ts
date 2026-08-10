@@ -18,7 +18,7 @@ interface LoginInput {
 
 
 export class AuthService {
-  async registerStaff({ email, password, name }: RegisterInput) {
+  async register({ email, password, name }: RegisterInput) {
     
     const existingStaff = await db("staff")
       .where({ email })

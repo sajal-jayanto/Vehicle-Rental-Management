@@ -10,15 +10,11 @@ const authService: Readonly<AuthService> = new AuthService();
 
 authRouter.post(
   "/register",
-  validateSchema({ params: registerSchema }),
+  validateSchema({ body: registerSchema }),
   asyncHandler(async (req: Request, res: Response) => {
     const { email, password, name } = req.body;
 
-    const staff = await authService.registerStaff({
-      email,
-      password,
-      name,
-    });
+    const staff = await authService.register({ name , email, password });
 
     res.status(StatusCodes.CREATED).json({
       status: "success",
@@ -27,16 +23,13 @@ authRouter.post(
   }),
 );
 
-authRouter.get(
+authRouter.post(
   "/login",
-  validateSchema({ params: loginSchema }),
+  validateSchema({ body: loginSchema }),
   asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
-    const result = await authService.login({
-      email,
-      password,
-    });
+    const result = await authService.login({ email, password });
 
     res.status(StatusCodes.OK).json({
       status: "success",

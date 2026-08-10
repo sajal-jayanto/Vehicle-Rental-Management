@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { env } from "../config/env.js";
 
@@ -18,7 +18,8 @@ export class HttpError extends Error {
   }
 }
 
-const errorHandler = (err: Error, req: Request, res: Response) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   const statusCode = err instanceof HttpError ? err.statusCode : StatusCodes.INTERNAL_SERVER_ERROR;
   const message = err instanceof HttpError ? err.message : "Internal Server Error";
   const details = err instanceof HttpError ? err.details : undefined;
