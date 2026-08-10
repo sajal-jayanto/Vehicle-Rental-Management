@@ -21,7 +21,7 @@ export async function up(knex: Knex): Promise<void> {
       .enu("status", ["booked", "ongoing", "completed", "cancelled"])
       .notNullable()
       .defaultTo("booked");
-      
+
     table.timestamp("created_at", { useTz: true }).notNullable().defaultTo(knex.fn.now());
     table.timestamp("updated_at", { useTz: true }).notNullable().defaultTo(knex.fn.now());
     table.index("vehicle_id");

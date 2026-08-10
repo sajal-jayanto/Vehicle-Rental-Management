@@ -16,13 +16,9 @@ interface LoginInput {
   password: string;
 }
 
-
 export class AuthService {
   async register({ email, password, name }: RegisterInput) {
-    
-    const existingStaff = await db("staff")
-      .where({ email })
-      .first();
+    const existingStaff = await db("staff").where({ email }).first();
 
     if (existingStaff) {
       throw new HttpError(`Email already registered`, StatusCodes.CONFLICT);
@@ -32,24 +28,19 @@ export class AuthService {
 
     const [staff] = await db("staff")
       .insert({ email, password_hash: passwordHash, name })
-      .returning([ "id", "email", "name", "created_at", "updated_at" ]);
+      .returning(["id", "email", "name", "created_at", "updated_at"]);
 
     return staff;
   }
 
   async login({ email, password }: LoginInput) {
-    const staff = await db("staff")
-      .where({ email })
-      .first();
+    const staff = await db("staff").where({ email }).first();
 
     if (!staff) {
       throw new HttpError(`Invalid email address`, StatusCodes.NOT_FOUND);
     }
 
-    const passwordMatched = await bcrypt.compare(
-      password,
-      staff.password_hash,
-    );
+    const passwordMatched = await bcrypt.compare(password, staff.password_hash);
 
     if (!passwordMatched) {
       throw new HttpError(`Invalid password`, StatusCodes.NOT_FOUND);
@@ -59,10 +50,10 @@ export class AuthService {
       id: staff.id,
       email: staff.email,
       name: staff.name,
-    }
+    };
 
-    const token = jwt.sign(staffInfo, env.JWT_SECRET, { expiresIn: '1d' } );
-    
+    const token = jwt.sign(staffInfo, env.JWT_SECRET, { expiresIn: "1d" });
+
     return {
       staff: staffInfo,
       token,

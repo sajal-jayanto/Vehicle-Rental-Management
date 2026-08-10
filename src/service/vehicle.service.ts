@@ -10,22 +10,20 @@ interface createVehicleReq {
   photoPath: string | null;
 }
 
-interface findAllReq{
-  page: number; 
+interface findAllReq {
+  page: number;
   limit: number;
-  category: string | null | undefined; 
-  search: string | undefined | null ;
-  offset : number
+  category: string | null | undefined;
+  search: string | undefined | null;
+  offset: number;
 }
 
 export class VehicleService {
-  async createVehicle({ name, plate_number, category, daily_rate , photoPath } : createVehicleReq) {
-    const existingVehicle = await db("vehicles")
-      .where("plate_number", plate_number)
-      .first();
+  async createVehicle({ name, plate_number, category, daily_rate, photoPath }: createVehicleReq) {
+    const existingVehicle = await db("vehicles").where("plate_number", plate_number).first();
 
     if (existingVehicle) {
-      throw new HttpError("Vehicle with this plate number already exists", StatusCodes.CONFLICT );
+      throw new HttpError("Vehicle with this plate number already exists", StatusCodes.CONFLICT);
     }
 
     const [vehicle] = await db("vehicles")
@@ -38,12 +36,11 @@ export class VehicleService {
       })
       .returning("*");
 
-    return vehicle
+    return vehicle;
   }
 
-  async findAll({ page , limit, category, search, offset} : findAllReq) {
-    const query = db("vehicles")
-      .whereNull("deleted_at");
+  async findAll({ page, limit, category, search, offset }: findAllReq) {
+    const query = db("vehicles").whereNull("deleted_at");
 
     if (category != "") {
       query.where("category", category);
@@ -77,16 +74,13 @@ export class VehicleService {
       totalPages,
       hasNextPage: page < totalPages,
       hasPreviousPage: page > 1,
-    }
+    };
 
-    return { vehicles , pagination}
+    return { vehicles, pagination };
   }
 
-  async findOne({ id } : {id: number}) {
-    const vehicle = await db("vehicles")
-      .where("id", id)
-      .whereNull("deleted_at")
-      .first();
+  async findOne({ id }: { id: number }) {
+    const vehicle = await db("vehicles").where("id", id).whereNull("deleted_at").first();
 
     if (!vehicle) {
       throw new HttpError("Vehicle not found", StatusCodes.NOT_FOUND);
@@ -95,21 +89,16 @@ export class VehicleService {
     return vehicle;
   }
 
-  async deleteVehicle({ id } : {id: number}){
-    const vehicle = await db("vehicles")
-      .where("id", id)
-      .whereNull("deleted_at")
-      .first();
+  async deleteVehicle({ id }: { id: number }) {
+    const vehicle = await db("vehicles").where("id", id).whereNull("deleted_at").first();
 
     if (!vehicle) {
-      throw new HttpError("Vehicle not found", StatusCodes.NOT_FOUND );
+      throw new HttpError("Vehicle not found", StatusCodes.NOT_FOUND);
     }
 
-    await db("vehicles")
-      .where("id", id)
-      .update({
-        deleted_at: db.fn.now(),
-        updated_at: db.fn.now(),
-      });
+    await db("vehicles").where("id", id).update({
+      deleted_at: db.fn.now(),
+      updated_at: db.fn.now(),
+    });
   }
 }

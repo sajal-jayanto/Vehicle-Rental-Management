@@ -4,7 +4,12 @@ import { VehicleService } from "../service/vehicle.service.js";
 import { vehiclePhotoUpload } from "../middlewares/upload.middleware.js";
 import { StatusCodes } from "http-status-codes";
 import { validateSchema } from "../middlewares/validate.middleware.js";
-import { createVehicleSchema, deleteVehicleSchema, getVehicleByIdSchema, getVehiclesSchema } from "../schemas/vehicle.schema.js";
+import {
+  createVehicleSchema,
+  deleteVehicleSchema,
+  getVehicleByIdSchema,
+  getVehiclesSchema,
+} from "../schemas/vehicle.schema.js";
 
 export const vehicleRouter = Router();
 const vehicleService: Readonly<VehicleService> = new VehicleService();
@@ -13,23 +18,27 @@ vehicleRouter.get(
   "/",
   validateSchema({ query: getVehiclesSchema }),
   asyncHandler(async (req: Request, res: Response) => {
-    
     const page = Math.max(Number(req.query.page) || 1, 1);
-    const limit = Math.min( Math.max(Number(req.query.limit) || 10, 1), 100);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
     const category = String(req.query.category ?? "");
     const search = String(req.query.search ?? "");
     const offset = (page - 1) * limit;
 
-    const { vehicles, pagination } = await vehicleService.findAll({page , limit, category, search, offset})
+    const { vehicles, pagination } = await vehicleService.findAll({
+      page,
+      limit,
+      category,
+      search,
+      offset,
+    });
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
       data: vehicles,
       pagination: pagination,
     });
-  })
+  }),
 );
-
 
 vehicleRouter.get(
   "/:id",
@@ -37,13 +46,13 @@ vehicleRouter.get(
   asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
-    const vehicle  = await vehicleService.findOne({ id })
+    const vehicle = await vehicleService.findOne({ id });
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
       data: vehicle,
     });
-  })
+  }),
 );
 
 vehicleRouter.post(
@@ -54,7 +63,13 @@ vehicleRouter.post(
     const { name, plate_number, category, daily_rate } = req.body;
 
     const photoPath = req.file ? `/uploads/vehicles/${req.file.filename}` : null;
-    const vehicle = await vehicleService.createVehicle({ name, plate_number, category, daily_rate , photoPath});
+    const vehicle = await vehicleService.createVehicle({
+      name,
+      plate_number,
+      category,
+      daily_rate,
+      photoPath,
+    });
 
     res.status(StatusCodes.CREATED).json({
       statusCode: StatusCodes.CREATED,
@@ -63,7 +78,6 @@ vehicleRouter.post(
     });
   }),
 );
-
 
 vehicleRouter.delete(
   "/:id",
@@ -79,6 +93,3 @@ vehicleRouter.delete(
     });
   }),
 );
-
-
-

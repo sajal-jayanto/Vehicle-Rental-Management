@@ -1,5 +1,6 @@
 import express from "express";
 
+import path from "path";
 import cors from "cors";
 import helmet from "helmet";
 
@@ -12,7 +13,6 @@ import { authRouter } from "./routes/auth.routes.js";
 import { vehicleRouter } from "./routes/vehicle.routes.js";
 import { rentalRouter } from "./routes/rental.routes.js";
 import { reportRouter } from "./routes/report.routes.js";
-import path from "path";
 
 const app = express();
 
@@ -22,19 +22,18 @@ const bootstrap = () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(requestLogger);
-  
-  app.use("/uploads", express.static(path.resolve("uploads")) );
 
-  app.use('/health', healthRouter);
+  app.use("/uploads", express.static(path.resolve("uploads")));
+
+  app.use("/health", healthRouter);
 
   const v1Router = express.Router();
   app.use("/api/v1", v1Router);
 
   v1Router.use("/auth", authRouter);
-  v1Router.use('/vehicle', vehicleRouter);
-  v1Router.use('/rental', rentalRouter);
-  v1Router.use('/report', reportRouter);
-  
+  v1Router.use("/vehicle", vehicleRouter);
+  v1Router.use("/rental", rentalRouter);
+  v1Router.use("/report", reportRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

@@ -1,1 +1,1 @@
-export class RentalService{}
+export class RentalService {}

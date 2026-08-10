@@ -14,7 +14,7 @@ authRouter.post(
   asyncHandler(async (req: Request, res: Response) => {
     const { email, password, name } = req.body;
 
-    const staff = await authService.register({ name , email, password });
+    const staff = await authService.register({ name, email, password });
 
     res.status(StatusCodes.CREATED).json({
       status: "success",

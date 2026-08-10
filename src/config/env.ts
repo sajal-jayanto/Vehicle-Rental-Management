@@ -14,5 +14,4 @@ export const env = {
 
   // ========================== JWT config ==================== //
   JWT_SECRET: process.env.JWT_SECRET ?? "",
-
 };
