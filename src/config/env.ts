@@ -11,4 +11,8 @@ export const env = {
   PG_DB_USER_NAME: process.env.DB_USER_NAME ?? "root",
   PG_DB_PASSWORD: process.env.DB_PASSWORD ?? "root",
   PG_DB_NAME: process.env.DB_NAME ?? "vehicle_rent",
+
+  // ========================== JWT config ==================== //
+  JWT_SECRET: process.env.JWT_SECRET ?? "",
+
 };
