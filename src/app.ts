@@ -12,6 +12,7 @@ import { authRouter } from "./routes/auth.routes.js";
 import { vehicleRouter } from "./routes/vehicle.routes.js";
 import { rentalRouter } from "./routes/rental.routes.js";
 import { reportRouter } from "./routes/report.routes.js";
+import path from "path";
 
 const app = express();
 
@@ -21,6 +22,8 @@ const bootstrap = () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(requestLogger);
+  
+  app.use("/uploads", express.static(path.resolve("uploads")) );
 
   app.use('/health', healthRouter);
 
