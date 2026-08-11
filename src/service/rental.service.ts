@@ -26,13 +26,17 @@ interface GetRentalsQuery {
 }
 
 export class RentalService {
-  async createVehicleRental({vehicle_id, customer_name, customer_phone, start_date, end_date} : CreateRentalRequest) {
-    const vehicle = await db("vehicles")
-      .where("id", vehicle_id)
-      .first();
+  async createVehicleRental({
+    vehicle_id,
+    customer_name,
+    customer_phone,
+    start_date,
+    end_date,
+  }: CreateRentalRequest) {
+    const vehicle = await db("vehicles").where("id", vehicle_id).first();
 
     if (!vehicle) {
-      throw new HttpError("Vehicle not found", StatusCodes.NOT_FOUND );
+      throw new HttpError("Vehicle not found", StatusCodes.NOT_FOUND);
     }
 
     const overlappingRental = await db("rentals")
@@ -46,10 +50,7 @@ export class RentalService {
       throw new HttpError("Vehicle is already rented for the selected dates", StatusCodes.CONFLICT);
     }
 
-    const numberOfDays = calculateRentalDays(
-      start_date,
-      end_date
-    );
+    const numberOfDays = calculateRentalDays(start_date, end_date);
 
     const totalAmount = Number(vehicle.daily_rate) * numberOfDays;
 
@@ -79,43 +80,38 @@ export class RentalService {
     return rental;
   }
 
-  async findOne({id} : {id : number}) {
+  async findOne({ id }: { id: number }) {
     const rental = await db("rentals")
       .where("rentals.id", id)
-      .join(
-        "vehicles",
-        "rentals.vehicle_id",
-        "vehicles.id"
-      )
+      .join("vehicles", "rentals.vehicle_id", "vehicles.id")
       .select(
         "rentals.*",
         "vehicles.name as vehicle_name",
         "vehicles.plate_number",
         "vehicles.category",
-        "vehicles.daily_rate"
+        "vehicles.daily_rate",
       )
       .first();
 
     if (!rental) {
-      throw new HttpError("Rental not found", StatusCodes.NOT_FOUND );
+      throw new HttpError("Rental not found", StatusCodes.NOT_FOUND);
     }
 
     return rental;
   }
 
-  async findAll({page = 1, limit = 10, vehicle_id, status, start_date, end_date,} : GetRentalsQuery) {
+  async findAll({
+    page = 1,
+    limit = 10,
+    vehicle_id,
+    status,
+    start_date,
+    end_date,
+  }: GetRentalsQuery) {
     const offset = (page - 1) * limit;
     const query = db("rentals")
-      .join(
-        "vehicles",
-        "rentals.vehicle_id",
-        "vehicles.id"
-      )
-      .select(
-        "rentals.*",
-        "vehicles.name as vehicle_name",
-        "vehicles.plate_number"
-      );
+      .join("vehicles", "rentals.vehicle_id", "vehicles.id")
+      .select("rentals.*", "vehicles.name as vehicle_name", "vehicles.plate_number");
 
     if (vehicle_id != "") {
       query.where("rentals.vehicle_id", vehicle_id);
@@ -130,7 +126,7 @@ export class RentalService {
     }
 
     if (end_date) {
-      query.where( "rentals.end_date", "<=", end_date);
+      query.where("rentals.end_date", "<=", end_date);
     }
 
     const countResult = await query
@@ -142,10 +138,7 @@ export class RentalService {
 
     const count = Number(countResult?.count ?? 0);
 
-    const rentals = await query
-      .orderBy("rentals.created_at", "desc")
-      .limit(limit)
-      .offset(offset);
+    const rentals = await query.orderBy("rentals.created_at", "desc").limit(limit).offset(offset);
 
     return {
       data: rentals,
@@ -158,20 +151,24 @@ export class RentalService {
     };
   }
 
-  async deleteRental({ id } : { id: number }) {
-    const deleted = await db("rentals")
-      .where("id", id)
-      .delete();
+  async deleteRental({ id }: { id: number }) {
+    const deleted = await db("rentals").where("id", id).delete();
 
     if (!deleted) {
       throw new HttpError("Rental not found", StatusCodes.NOT_FOUND);
     }
   }
 
-  async editRental({id, vehicle_id, customer_name, customer_phone, start_date, end_date, status } : EditRentalRequest) {
-    const existingRental = await db("rentals")
-      .where("id", id)
-      .first();
+  async editRental({
+    id,
+    vehicle_id,
+    customer_name,
+    customer_phone,
+    start_date,
+    end_date,
+    status,
+  }: EditRentalRequest) {
+    const existingRental = await db("rentals").where("id", id).first();
 
     if (!existingRental) {
       throw new HttpError("Rental not found", StatusCodes.NOT_FOUND);
@@ -185,12 +182,10 @@ export class RentalService {
       throw new HttpError("Start date cannot be after end date", StatusCodes.BAD_REQUEST);
     }
 
-    const vehicle = await db("vehicles")
-      .where("id", newVehicleId)
-      .first();
+    const vehicle = await db("vehicles").where("id", newVehicleId).first();
 
     if (!vehicle) {
-      throw new HttpError("Vehicle not found",StatusCodes.NOT_FOUND);
+      throw new HttpError("Vehicle not found", StatusCodes.NOT_FOUND);
     }
 
     const overlappingRental = await db("rentals")
@@ -223,11 +218,16 @@ export class RentalService {
       .where("id", id)
       .update(updateData)
       .returning([
-        "id", "vehicle_id",
-        "customer_name", "customer_phone",
-        "start_date", "end_date",
-        "total_amount", "status",
-        "created_at", "updated_at",
+        "id",
+        "vehicle_id",
+        "customer_name",
+        "customer_phone",
+        "start_date",
+        "end_date",
+        "total_amount",
+        "status",
+        "created_at",
+        "updated_at",
       ]);
 
     return rental;

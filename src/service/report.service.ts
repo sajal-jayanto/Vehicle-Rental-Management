@@ -8,9 +8,9 @@ interface RentalReportQuery {
 }
 
 export class ReportService {
-  async generateReport({month, vehicle_id} : RentalReportQuery) {
+  async generateReport({ month, vehicle_id }: RentalReportQuery) {
     const reportMonth = month ?? new Date().toISOString().slice(0, 7);
-    
+
     if (!/^\d{4}-\d{2}$/.test(reportMonth)) {
       throw new HttpError("Invalid month format. Use YYYY-MM", StatusCodes.BAD_REQUEST);
     }
@@ -18,18 +18,17 @@ export class ReportService {
     const monthStart = `${reportMonth}-01`;
     const [year, monthNumber] = reportMonth.split("-").map(Number);
 
-    const nextMonth = monthNumber === 12 ? `${Number(year) + 1}-01-01` : `${year}-${String(Number(monthNumber) + 1).padStart(2, "0")}-01`;
+    const nextMonth =
+      monthNumber === 12
+        ? `${Number(year) + 1}-01-01`
+        : `${year}-${String(Number(monthNumber) + 1).padStart(2, "0")}-01`;
     const monthEnd = new Date(`${nextMonth}T00:00:00Z`);
 
     monthEnd.setUTCDate(monthEnd.getUTCDate() - 1);
     const monthEndString = monthEnd.toISOString().slice(0, 10);
 
     const query = db("rentals")
-      .join(
-        "vehicles",
-        "rentals.vehicle_id",
-        "vehicles.id"
-      )
+      .join("vehicles", "rentals.vehicle_id", "vehicles.id")
       .where("rentals.status", "!=", "cancelled")
       .where("rentals.start_date", "<=", monthEndString)
       .where("rentals.end_date", ">=", monthStart);
@@ -45,10 +44,13 @@ export class ReportService {
       "rentals.end_date",
       "rentals.total_amount",
       "vehicles.name",
-      "vehicles.daily_rate"
+      "vehicles.daily_rate",
     );
 
-    const reportMap = new Map<number, { id: number; name: string; total_bookings: number; days_rented: number; revenue: number; }>();
+    const reportMap = new Map<
+      number,
+      { id: number; name: string; total_bookings: number; days_rented: number; revenue: number }
+    >();
 
     for (const rental of rentals) {
       const rentalStart = rental.start_date > monthStart ? rental.start_date : monthStart;
@@ -56,7 +58,7 @@ export class ReportService {
 
       const start = new Date(`${rentalStart}T00:00:00Z`);
       const end = new Date(`${rentalEnd}T00:00:00Z`);
-      const daysRented = Math.floor( (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      const daysRented = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
       const revenue = Number(rental.daily_rate) * daysRented;
 
       if (!reportMap.has(rental.vehicle_id)) {
@@ -76,7 +78,12 @@ export class ReportService {
     }
 
     const vehicles = Array.from(reportMap.values());
-    const highestRevenueVehicle = vehicles.length > 0 ? vehicles.reduce((highest, current) => current.revenue > highest.revenue ? current : highest) : null;
+    const highestRevenueVehicle =
+      vehicles.length > 0
+        ? vehicles.reduce((highest, current) =>
+            current.revenue > highest.revenue ? current : highest,
+          )
+        : null;
 
     return {
       month: reportMonth,

@@ -83,10 +83,10 @@ vehicleRouter.post(
 vehicleRouter.put(
   "/:id",
   vehiclePhotoUpload.single("photo"),
-  validateSchema({ params: getVehicleByIdSchema ,  body: editVehicleSchema }),
+  validateSchema({ params: getVehicleByIdSchema, body: editVehicleSchema }),
   asyncHandler(async (req: Request, res: Response) => {
     const { name, plate_number, category, daily_rate } = req.body;
-    const id  = Number(req.params.id);
+    const id = Number(req.params.id);
 
     const photoPath = req.file ? `/uploads/vehicles/${req.file.filename}` : null;
     const vehicle = await vehicleService.editVehicle({
@@ -101,11 +101,10 @@ vehicleRouter.put(
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.CREATED,
       message: "Vehicle updated successfully",
-      data: vehicle
-    })
+      data: vehicle,
+    });
   }),
 );
-
 
 vehicleRouter.delete(
   "/:id",

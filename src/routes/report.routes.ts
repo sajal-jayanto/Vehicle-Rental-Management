@@ -24,5 +24,5 @@ reportRouter.get(
       message: "Report generated successfully",
       data: report,
     });
-  })
+  }),
 );
