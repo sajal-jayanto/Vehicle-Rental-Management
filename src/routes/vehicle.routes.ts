@@ -7,6 +7,7 @@ import { validateSchema } from "../middlewares/validate.middleware.js";
 import {
   createVehicleSchema,
   deleteVehicleSchema,
+  editVehicleSchema,
   getVehicleByIdSchema,
   getVehiclesSchema,
 } from "../schemas/vehicle.schema.js";
@@ -78,6 +79,33 @@ vehicleRouter.post(
     });
   }),
 );
+
+vehicleRouter.put(
+  "/:id",
+  vehiclePhotoUpload.single("photo"),
+  validateSchema({ params: getVehicleByIdSchema ,  body: editVehicleSchema }),
+  asyncHandler(async (req: Request, res: Response) => {
+    const { name, plate_number, category, daily_rate } = req.body;
+    const id  = Number(req.params.id);
+
+    const photoPath = req.file ? `/uploads/vehicles/${req.file.filename}` : null;
+    const vehicle = await vehicleService.editVehicle({
+      id,
+      name,
+      plate_number,
+      category,
+      daily_rate,
+      photoPath,
+    });
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.CREATED,
+      message: "Vehicle updated successfully",
+      data: vehicle
+    })
+  }),
+);
+
 
 vehicleRouter.delete(
   "/:id",
