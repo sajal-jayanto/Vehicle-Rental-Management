@@ -83,7 +83,7 @@ rentalRouter.put(
     const id = Number(req.params.id);
     const { vehicle_id, customer_name, customer_phone, start_date, end_date, status } = req.body;
 
-    const updatedRental = rentalService.editRental({
+    const updatedRental = await rentalService.editRental({
       id,
       vehicle_id,
       customer_name,

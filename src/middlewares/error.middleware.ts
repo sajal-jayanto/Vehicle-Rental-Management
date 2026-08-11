@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { MulterError } from "multer";
 import { env } from "../config/env.js";
 
 export class HttpError extends Error {
@@ -20,8 +21,14 @@ export class HttpError extends Error {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
-  const statusCode = err instanceof HttpError ? err.statusCode : StatusCodes.INTERNAL_SERVER_ERROR;
-  const message = err instanceof HttpError ? err.message : "Internal Server Error";
+  const isKnownError = err instanceof HttpError || err instanceof MulterError;
+  const statusCode =
+    err instanceof HttpError
+      ? err.statusCode
+      : err instanceof MulterError
+        ? StatusCodes.BAD_REQUEST
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+  const message = isKnownError ? err.message : "Internal Server Error";
   const details = err instanceof HttpError ? err.details : undefined;
 
   if (env.nodeEnv !== "test") {

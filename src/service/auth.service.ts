@@ -37,13 +37,13 @@ export class AuthService {
     const staff = await db("staff").where({ email }).first();
 
     if (!staff) {
-      throw new HttpError(`Invalid email address`, StatusCodes.NOT_FOUND);
+      throw new HttpError("Invalid email or password", StatusCodes.UNAUTHORIZED);
     }
 
     const passwordMatched = await bcrypt.compare(password, staff.password_hash);
 
     if (!passwordMatched) {
-      throw new HttpError(`Invalid password`, StatusCodes.NOT_FOUND);
+      throw new HttpError("Invalid email or password", StatusCodes.UNAUTHORIZED);
     }
 
     const staffInfo = {

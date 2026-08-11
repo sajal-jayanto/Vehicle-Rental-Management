@@ -1,6 +1,8 @@
 import multer from "multer";
 import path from "path";
 import crypto from "crypto";
+import { StatusCodes } from "http-status-codes";
+import { HttpError } from "./error.middleware.js";
 
 const allowed = ["image/jpeg", "image/png", "image/webp"];
 
@@ -18,6 +20,9 @@ export const vehiclePhotoUpload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // Image Limit 5 MB
   fileFilter: (_req, file, cb) => {
     if (allowed.includes(file.mimetype)) cb(null, true);
-    else cb(new Error("Only JPG, PNG and WebP images are allowed"));
+    else
+      cb(
+        new HttpError("Only JPG, PNG and WebP images are allowed", StatusCodes.BAD_REQUEST),
+      );
   },
 });

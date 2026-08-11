@@ -1,5 +1,9 @@
 import "dotenv/config";
 
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required but was not set");
+}
+
 export const env = {
   // ================= app config ========================= //
   port: Number(process.env.PORT ?? 3000),
@@ -13,5 +17,5 @@ export const env = {
   PG_DB_NAME: process.env.DB_NAME ?? "vehicle_rent",
 
   // ========================== JWT config ==================== //
-  JWT_SECRET: process.env.JWT_SECRET ?? "",
+  JWT_SECRET: process.env.JWT_SECRET,
 };

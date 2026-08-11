@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { requestLogger } from "./middlewares/requestLogger.middleware.js";
 import { notFoundHandler } from "./middlewares/notFound.middleware.js";
+import { authenticate } from "./middlewares/authenticate.middleware.js";
 
 import { healthRouter } from "./routes/health.routes.js";
 import { authRouter } from "./routes/auth.routes.js";
@@ -31,9 +32,9 @@ const bootstrap = () => {
   app.use("/api/v1", v1Router);
 
   v1Router.use("/auth", authRouter);
-  v1Router.use("/vehicle", vehicleRouter);
-  v1Router.use("/rental", rentalRouter);
-  v1Router.use("/report", reportRouter);
+  v1Router.use("/vehicle", authenticate, vehicleRouter);
+  v1Router.use("/rental", authenticate, rentalRouter);
+  v1Router.use("/report", authenticate, reportRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
