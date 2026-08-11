@@ -74,18 +74,18 @@ Built with Express, TypeScript, Knex (PostgreSQL), Zod validation, and JWT authe
 
 ## Available Scripts
 
-| Script                          | Description                              |
-| -------------------------------- | ----------------------------------------- |
-| `npm run dev`                    | Start the dev server with hot-reload      |
-| `npm run build`                  | Compile TypeScript to `dist/`             |
-| `npm run start`                  | Run the compiled build (`dist/server.js`) |
-| `npm run lint`                   | Run ESLint                                |
-| `npm run format`                 | Format code with Prettier                 |
-| `npm run format:check`           | Check formatting without writing          |
-| `npm run db:migration:create`    | Generate a new migration file             |
-| `npm run db:migration:apply`     | Run all pending migrations                |
-| `npm run db:migration:rollback`  | Roll back the last migration batch        |
-| `npm run db:migration:status`    | Show migration status                     |
+| Script                          | Description                               |
+| ------------------------------- | ----------------------------------------- |
+| `npm run dev`                   | Start the dev server with hot-reload      |
+| `npm run build`                 | Compile TypeScript to `dist/`             |
+| `npm run start`                 | Run the compiled build (`dist/server.js`) |
+| `npm run lint`                  | Run ESLint                                |
+| `npm run format`                | Format code with Prettier                 |
+| `npm run format:check`          | Check formatting without writing          |
+| `npm run db:migration:create`   | Generate a new migration file             |
+| `npm run db:migration:apply`    | Run all pending migrations                |
+| `npm run db:migration:rollback` | Roll back the last migration batch        |
+| `npm run db:migration:status`   | Show migration status                     |
 
 ## Authentication
 
@@ -148,11 +148,11 @@ Create a new staff account. No auth required.
 }
 ```
 
-| Field    | Type   | Rules                        |
-| -------- | ------ | ----------------------------- |
-| name     | string | min 2 characters              |
-| email    | string | valid email                   |
-| password | string | min 8 characters              |
+| Field    | Type   | Rules            |
+| -------- | ------ | ---------------- |
+| name     | string | min 2 characters |
+| email    | string | valid email      |
+| password | string | min 8 characters |
 
 **Response `201 Created`**
 
@@ -217,11 +217,11 @@ List vehicles, paginated.
 **Query params**
 
 | Param    | Type   | Default | Notes                          |
-| -------- | ------ | ------- | -------------------------------- |
-| page     | number | 1       | ≥ 1                             |
-| limit    | number | 10      | 1–100                            |
-| category | string | —       | exact match                     |
-| search   | string | —       | case-insensitive match on name  |
+| -------- | ------ | ------- | ------------------------------ |
+| page     | number | 1       | ≥ 1                            |
+| limit    | number | 10      | 1–100                          |
+| category | string | —       | exact match                    |
+| search   | string | —       | case-insensitive match on name |
 
 **Example**
 
@@ -276,12 +276,12 @@ Create a vehicle. `multipart/form-data` (photo is optional).
 
 **Form fields**
 
-| Field        | Type   | Rules                    |
-| ------------ | ------ | -------------------------- |
-| name         | string | required, max 255          |
-| plate_number | string | required, max 50, unique   |
-| category     | string | required, max 100          |
-| daily_rate   | number | > 0                        |
+| Field        | Type   | Rules                           |
+| ------------ | ------ | ------------------------------- |
+| name         | string | required, max 255               |
+| plate_number | string | required, max 50, unique        |
+| category     | string | required, max 100               |
+| daily_rate   | number | > 0                             |
 | photo        | file   | optional — JPG/PNG/WebP, ≤ 5 MB |
 
 **Example (curl)**
@@ -324,7 +324,13 @@ Update a vehicle. `multipart/form-data`, same fields as create (all required —
 {
   "statusCode": 200,
   "message": "Vehicle updated successfully",
-  "data": { "name": "Toyota Corolla", "plate_number": "DHA-1234", "category": "sedan", "daily_rate": "60.00", "photo_path": null }
+  "data": {
+    "name": "Toyota Corolla",
+    "plate_number": "DHA-1234",
+    "category": "sedan",
+    "daily_rate": "60.00",
+    "photo_path": null
+  }
 }
 ```
 
@@ -358,14 +364,14 @@ List rentals, paginated, with vehicle info joined in.
 
 **Query params**
 
-| Param      | Type   | Notes                                              |
-| ---------- | ------ | --------------------------------------------------- |
-| page       | number | optional, ≥ 1                                      |
-| limit      | number | optional, ≥ 1                                       |
-| vehicle_id | string | optional — filter by vehicle                        |
+| Param      | Type   | Notes                                                           |
+| ---------- | ------ | --------------------------------------------------------------- |
+| page       | number | optional, ≥ 1                                                   |
+| limit      | number | optional, ≥ 1                                                   |
+| vehicle_id | string | optional — filter by vehicle                                    |
 | status     | string | optional — one of `booked`, `ongoing`, `completed`, `cancelled` |
-| start_date | string | optional — `YYYY-MM-DD`, rentals starting on/after  |
-| end_date   | string | optional — `YYYY-MM-DD`, rentals ending on/before   |
+| start_date | string | optional — `YYYY-MM-DD`, rentals starting on/after              |
+| end_date   | string | optional — `YYYY-MM-DD`, rentals ending on/before               |
 
 **Example**
 
@@ -428,13 +434,13 @@ Create a booking. `application/json`.
 }
 ```
 
-| Field          | Type   | Rules                                  |
-| -------------- | ------ | ----------------------------------------- |
-| vehicle_id     | number | positive integer                          |
-| customer_name  | string | required, max 255                         |
-| customer_phone | string | required, max 30                          |
-| start_date     | string | `YYYY-MM-DD`                              |
-| end_date       | string | `YYYY-MM-DD`, must be ≥ `start_date`      |
+| Field          | Type   | Rules                                |
+| -------------- | ------ | ------------------------------------ |
+| vehicle_id     | number | positive integer                     |
+| customer_name  | string | required, max 255                    |
+| customer_phone | string | required, max 30                     |
+| start_date     | string | `YYYY-MM-DD`                         |
+| end_date       | string | `YYYY-MM-DD`, must be ≥ `start_date` |
 
 `total_amount` is computed server-side as `daily_rate × number_of_days` (inclusive of both start and end date). Status defaults to `booked`.
 
@@ -444,7 +450,13 @@ Create a booking. `application/json`.
 {
   "statusCode": 201,
   "message": "Vehicle rented successful",
-  "data": { "id": "1", "vehicle_id": "1", "total_amount": "150.00", "status": "booked", "...": "..." }
+  "data": {
+    "id": "1",
+    "vehicle_id": "1",
+    "total_amount": "150.00",
+    "status": "booked",
+    "...": "..."
+  }
 }
 ```
 
@@ -509,9 +521,9 @@ Monthly revenue report, grouped by vehicle.
 
 **Query params**
 
-| Param      | Type   | Default       | Notes                    |
-| ---------- | ------ | ------------- | -------------------------- |
-| month      | string | current month | `YYYY-MM`                 |
+| Param      | Type   | Default       | Notes                                              |
+| ---------- | ------ | ------------- | -------------------------------------------------- |
+| month      | string | current month | `YYYY-MM`                                          |
 | vehicle_id | number | —             | optional, positive integer — filter to one vehicle |
 
 **Example**
@@ -531,7 +543,13 @@ GET /api/v1/report/rentals?month=2026-08&vehicle_id=1
     "vehicles": [
       { "id": 1, "name": "Toyota Corolla", "total_bookings": 3, "days_rented": 9, "revenue": 450 }
     ],
-    "highest_revenue_vehicle": { "id": 1, "name": "Toyota Corolla", "total_bookings": 3, "days_rented": 9, "revenue": 450 }
+    "highest_revenue_vehicle": {
+      "id": 1,
+      "name": "Toyota Corolla",
+      "total_bookings": 3,
+      "days_rented": 9,
+      "revenue": 450
+    }
   }
 }
 ```
@@ -550,21 +568,19 @@ All errors follow the same shape:
 {
   "statusCode": 400,
   "message": "Validation failed",
-  "details": [
-    { "path": "email", "message": "Invalid email address" }
-  ]
+  "details": [{ "path": "email", "message": "Invalid email address" }]
 }
 ```
 
 `details` is only present for validation errors (`400`).
 
-| Status | Meaning                                    |
-| ------ | -------------------------------------------- |
-| 400    | Validation failure / bad request              |
-| 401    | Missing/invalid token, or bad credentials     |
-| 404    | Resource not found                            |
-| 409    | Conflict (duplicate, overlapping booking)     |
-| 500    | Unexpected server error                       |
+| Status | Meaning                                   |
+| ------ | ----------------------------------------- |
+| 400    | Validation failure / bad request          |
+| 401    | Missing/invalid token, or bad credentials |
+| 404    | Resource not found                        |
+| 409    | Conflict (duplicate, overlapping booking) |
+| 500    | Unexpected server error                   |
 
 ## Uploaded Files
 

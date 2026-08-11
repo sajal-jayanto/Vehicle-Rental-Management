@@ -20,9 +20,6 @@ export const vehiclePhotoUpload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // Image Limit 5 MB
   fileFilter: (_req, file, cb) => {
     if (allowed.includes(file.mimetype)) cb(null, true);
-    else
-      cb(
-        new HttpError("Only JPG, PNG and WebP images are allowed", StatusCodes.BAD_REQUEST),
-      );
+    else cb(new HttpError("Only JPG, PNG and WebP images are allowed", StatusCodes.BAD_REQUEST));
   },
 });
