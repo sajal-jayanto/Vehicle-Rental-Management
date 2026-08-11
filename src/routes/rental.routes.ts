@@ -98,8 +98,6 @@ rentalRouter.put(
   })
 )
 
-
-
 rentalRouter.delete(
   "/:id",
   validateSchema({ params: getReportByIdSchema }),
