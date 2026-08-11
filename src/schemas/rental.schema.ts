@@ -36,7 +36,6 @@ export const getReportByIdSchema = z.object({
   id: z.coerce.number().int().positive(),
 });
 
-
 export const getRentalsSchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().optional(),

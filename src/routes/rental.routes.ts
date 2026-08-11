@@ -54,7 +54,7 @@ rentalRouter.get(
 
 rentalRouter.post(
   "/",
-  validateSchema({ body:  createRentalSchema }),
+  validateSchema({ body: createRentalSchema }),
   asyncHandler(async (req: Request, res: Response) => {
     const { vehicle_id, customer_name, customer_phone, start_date, end_date } =  req.body;
 
@@ -73,6 +73,31 @@ rentalRouter.post(
     })
   }),
 );
+
+rentalRouter.put(
+  "/:id",
+  validateSchema({ params: getReportByIdSchema, body: createRentalSchema }),
+  asyncHandler(async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const { vehicle_id, customer_name, customer_phone, start_date, end_date, status } = req.body;
+    
+    const updatedRental = rentalService.editRental({
+      id, 
+      vehicle_id, 
+      customer_name, 
+      customer_phone, 
+      start_date, end_date, 
+      status 
+    });
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.CREATED,
+      message: "Rental updated successfully",
+      data: updatedRental
+    })
+  })
+)
+
 
 
 rentalRouter.delete(
