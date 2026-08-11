@@ -116,7 +116,7 @@ vehicleRouter.delete(
     await vehicleService.deleteVehicle({ id });
 
     res.status(StatusCodes.OK).json({
-      statusCode: StatusCodes.CREATED,
+      statusCode: StatusCodes.OK,
       message: "Vehicle deleted successfully",
     });
   }),

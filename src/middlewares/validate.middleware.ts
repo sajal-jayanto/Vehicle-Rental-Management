@@ -21,7 +21,10 @@ const validateSchema =
     try {
       if (body) req.body = body.parse(req.body);
       if (params) req.params = params.parse(req.params) as typeof req.params;
-      if (query) req.query = query.parse(req.query) as typeof req.query;
+      if (query) {
+        const parsed = query.parse(req.query);
+        Object.assign(req.query, parsed);
+      }
       next();
     } catch (err) {
       if (err instanceof ZodError) {
